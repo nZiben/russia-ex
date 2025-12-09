@@ -27,7 +27,8 @@
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
   background:
     radial-gradient(circle at top left, #fecaca 0, #fed7aa 45%, #fee2e2 100%),
     var(--bg-body);
@@ -44,7 +45,8 @@ body {
   padding: 24px 28px 32px;
   border-radius: 28px;
   background:
-    radial-gradient(circle at top right, rgba(254, 202, 202, 0.6), transparent 55%),
+    radial-gradient(circle at top right, rgba(254, 202, 202, 0.6), transparent
+        55%),
     var(--bg-card);
   border: 1px solid rgba(248, 113, 113, 0.25);
   box-shadow:
@@ -202,9 +204,13 @@ body {
   color: var(--text-muted);
 }
 
+/* КОНТЕЙНЕР КАРТЫ: фиксируем по левому краю и даём скролл, чтобы не выезжать за рамки */
+
 .map-grid-container {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 /* сетка: клетка = tile-size по высоте, ширине; span’ы дают разные размеры */
