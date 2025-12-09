@@ -55,8 +55,6 @@ Scores are summed across regions to give your total.
 ---
 
 Inspiration
-This project is inspired by 「中国制霸生成器」 / china-ex, an open-source “China footprint” map by itorr.
-
 Implementation details, code and styling in russia-ex are written from scratch and do not reuse code or assets from china-ex.
 
 License
