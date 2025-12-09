@@ -1,6 +1,7 @@
 import './styles.css';
 
 import { regions } from './config/regions';
+import { districts, districtById } from './config/districts';
 import { LEVELS } from './config/levels';
 import {
   createDefaultState,
@@ -9,7 +10,7 @@ import {
   clearRegionLevels
 } from './state/storage';
 import { computeScore } from './state/scoring';
-import { createMapView } from './render/map';
+import { createMapView, type MapMode } from './render/map';
 import { createLevelPopup } from './render/popup';
 import { exportMapImage } from './export/exportImage';
 import {
@@ -22,6 +23,7 @@ import {
   type Locale
 } from './i18n/i18n';
 import type { RegionLevelState } from './state/types';
+import type { DistrictId } from './state/types';
 
 function getInitialLocale(): Locale {
   return loadStoredLocale() ?? getDefaultLocale();
@@ -39,6 +41,9 @@ function initApp(): void {
   const langButtons = document.querySelectorAll<HTMLButtonElement>(
     '.language-switcher__button'
   );
+  const mapModeTitle = document.querySelector<HTMLElement>('#map-mode-title');
+  const mapModeHint = document.querySelector<HTMLElement>('#map-mode-hint');
+  const mapBackButton = document.querySelector<HTMLButtonElement>('#map-back');
 
   if (
     !appRoot ||
@@ -48,7 +53,10 @@ function initApp(): void {
     !resetButton ||
     !saveImageButton ||
     !scoreCurrentEl ||
-    !scoreMaxEl
+    !scoreMaxEl ||
+    !mapModeTitle ||
+    !mapModeHint ||
+    !mapBackButton
   ) {
     throw new Error('Missing core DOM elements');
   }
@@ -60,9 +68,13 @@ function initApp(): void {
 
   const popup = createLevelPopup({ levels: LEVELS });
 
+  let currentMode: MapMode = 'districts';
+  let currentDistrictId: DistrictId | null = null;
+
   const mapView = createMapView({
     container: mapRoot,
     regions,
+    districts,
     state: regionLevels,
     locale,
     onRegionClick: (region, element) => {
@@ -73,11 +85,17 @@ function initApp(): void {
         locale,
         onSelect: (levelId) => {
           regionLevels = { ...regionLevels, [region.id]: levelId };
-          mapView.updateRegionLevel(region.id, levelId);
           saveRegionLevels(regionLevels);
+          mapView.updateAll(regionLevels);
           updateScore();
         }
       });
+    },
+    onDistrictClick: (district) => {
+      currentMode = 'regions';
+      currentDistrictId = district.id;
+      mapView.showDistrict(district.id);
+      updateMapHeader();
     }
   });
 
@@ -116,13 +134,31 @@ function initApp(): void {
     scoreMaxEl.textContent = String(summary.maxScore);
   }
 
-  function updateLocale(newLocale: Locale): void {
+  function updateMapHeader(): void {
+    if (currentMode === 'districts') {
+      mapBackButton.hidden = true;
+      mapModeTitle.textContent = translate(locale, 'map.overviewTitle');
+      mapModeHint.textContent = translate(locale, 'map.overviewHint');
+    } else if (currentDistrictId) {
+      const district = districtById.get(currentDistrictId);
+      const name =
+        locale === 'ru'
+          ? district?.fullNameRu ?? ''
+          : district?.fullNameEn ?? '';
+      mapBackButton.hidden = false;
+      mapModeTitle.textContent = name;
+      mapModeHint.textContent = translate(locale, 'map.districtHint');
+    }
+  }
+
+  function setLocale(newLocale: Locale): void {
     locale = newLocale;
     storeLocale(locale);
     setDocumentLang(locale);
     applyTranslations(appRoot, locale);
     renderLegend(locale);
     mapView.updateLocale(locale);
+    updateMapHeader();
 
     langButtons.forEach((btn) => {
       const btnLocale = btn.dataset.locale as Locale | undefined;
@@ -138,8 +174,15 @@ function initApp(): void {
     btn.addEventListener('click', () => {
       const btnLocale = btn.dataset.locale as Locale | undefined;
       if (!btnLocale || btnLocale === locale) return;
-      updateLocale(btnLocale);
+      setLocale(btnLocale);
     });
+  });
+
+  mapBackButton.addEventListener('click', () => {
+    currentMode = 'districts';
+    currentDistrictId = null;
+    mapView.showOverview();
+    updateMapHeader();
   });
 
   resetButton.addEventListener('click', () => {
@@ -157,7 +200,9 @@ function initApp(): void {
   applyTranslations(appRoot, locale);
   renderLegend(locale);
   updateScore();
-  updateLocale(locale);
+  updateMapHeader();
+  mapView.updateAll(regionLevels);
+  setLocale(locale); // re-apply to sync language toggles
 }
 
 if (document.readyState === 'loading') {
