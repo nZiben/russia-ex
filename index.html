@@ -53,6 +53,20 @@
       <main class="app-main">
         <section class="map-section">
           <div class="map-section__map-wrapper">
+            <div class="map-header">
+              <div class="map-header__titles">
+                <div id="map-mode-title" class="map-header__title"></div>
+                <div id="map-mode-hint" class="map-header__hint"></div>
+              </div>
+              <button
+                type="button"
+                id="map-back"
+                class="button button--secondary button--small"
+                data-i18n-key="controls.backToOverview"
+                hidden
+              ></button>
+            </div>
+
             <div
               id="map-root"
               class="map-grid-container"
