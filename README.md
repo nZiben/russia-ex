@@ -1,6 +1,6 @@
 # russia-ex – interactive footprint map of Russian regions
 
-**russia-ex** is a single-page web app inspired by [itorr/china-ex](https://github.com/itorr/china-ex).  
+**russia-ex** is a single-page web app.  
 It lets you mark where you’ve lived, stayed, travelled, worked or just passed through across the federal subjects commonly listed for the Russian Federation, and then export a shareable PNG image of your personalized block map.
 
 > Note on geography  
@@ -55,6 +55,7 @@ Scores are summed across regions to give your total.
 ---
 
 Inspiration
+Inspired by [itorr/china-ex](https://github.com/itorr/china-ex)
 Implementation details, code and styling in russia-ex are written from scratch and do not reuse code or assets from china-ex.
 
 License
