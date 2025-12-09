@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>russia-ex – interactive footprint map of Russian regions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <div id="app" class="app">
+      <header class="app-header">
+        <div class="app-header__top">
+          <div>
+            <h1 class="app-title" data-i18n-key="app.title">russia-ex</h1>
+            <p class="app-subtitle" data-i18n-key="app.subtitle"></p>
+          </div>
+
+          <div class="app-header__actions">
+            <a
+              class="github-link"
+              href="https://github.com/your-username/russia-ex"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </a>
+
+            <div class="language-switcher" aria-label="Language selector">
+              <span
+                class="language-switcher__label"
+                data-i18n-key="controls.languageLabel"
+              ></span>
+              <button
+                type="button"
+                class="language-switcher__button is-active"
+                data-locale="en"
+              >
+                EN
+              </button>
+              <button
+                type="button"
+                class="language-switcher__button"
+                data-locale="ru"
+              >
+                RU
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <p class="app-description" data-i18n-key="app.description"></p>
+      </header>
+
+      <main class="app-main">
+        <section class="map-section">
+          <div class="map-section__map-wrapper">
+            <div
+              id="map-root"
+              class="map-grid-container"
+              aria-label="Map of Russian regions"
+              role="grid"
+            ></div>
+          </div>
+
+          <aside class="map-section__side">
+            <section class="legend">
+              <h2 class="legend__title" data-i18n-key="legend.title"></h2>
+              <ul id="legend-levels" class="legend__list"></ul>
+              <div class="legend__notes" id="legend-notes"></div>
+            </section>
+
+            <section class="score">
+              <p class="score__line">
+                <span data-i18n-key="score.totalLabel"></span>
+                <span class="score__value">
+                  <span id="score-current">0</span>
+                  <span>/</span>
+                  <span id="score-max">0</span>
+                </span>
+              </p>
+            </section>
+          </aside>
+        </section>
+
+        <section class="controls">
+          <button
+            type="button"
+            id="reset-all"
+            class="button button--secondary"
+            data-i18n-key="controls.resetAll"
+          ></button>
+          <button
+            type="button"
+            id="save-image"
+            class="button button--primary"
+            data-i18n-key="controls.saveImage"
+          ></button>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

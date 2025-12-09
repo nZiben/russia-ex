@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "allowJs": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "lib": ["ESNext", "DOM"],
+    "types": ["vitest/globals"]
+  },
+  "include": ["src/**/*", "tests/**/*", "vite.config.ts"],
+  "exclude": ["node_modules", "dist"]
+}
