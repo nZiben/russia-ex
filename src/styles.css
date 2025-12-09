@@ -7,7 +7,6 @@
     --text-muted: #6b7280;
     --accent: #f97316;
   
-    /* Bigger tiles → map takes much more space */
     --tile-size: 60px;
     --tile-radius: 8px;
   
@@ -170,7 +169,7 @@
   }
   
   .map-section__map-wrapper {
-    padding: 28px 28px 22px;
+    padding: 24px 24px 22px;
     border-radius: 26px;
     background:
       radial-gradient(circle at top, rgba(248, 250, 252, 0.7), transparent 60%),
@@ -178,19 +177,43 @@
     border: 2px solid rgba(209, 213, 219, 0.9);
   }
   
+  /* header над картой (режимы) */
+  
+  .map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  
+  .map-header__titles {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  
+  .map-header__title {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  
+  .map-header__hint {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+  
   .map-grid-container {
     display: flex;
     justify-content: center;
   }
   
-  /* With big tiles, we keep the map tight by using a relatively small gap */
   .map-grid {
     display: grid;
     grid-auto-rows: var(--tile-size);
     gap: 4px;
   }
   
-  /* region tiles */
+  /* region & district tiles */
   
   .region-tile {
     width: var(--tile-size);
@@ -212,6 +235,12 @@
       background-color 0.15s ease,
       border-color 0.15s ease;
   }
+  
+  .region-tile--district {
+    font-weight: 600;
+  }
+  
+  /* уровни */
   
   .region-tile[data-level='LIVED'] {
     background-color: var(--level-lived);
@@ -252,6 +281,8 @@
     flex-direction: column;
     gap: 16px;
   }
+  
+  /* legend, score, buttons */
   
   .legend {
     padding: 12px 14px;
@@ -348,6 +379,11 @@
       transform 0.08s ease;
   }
   
+  .button--small {
+    padding: 4px 10px;
+    font-size: 0.78rem;
+  }
+  
   .button--primary {
     background: var(--accent);
     color: #ffffff;
@@ -373,7 +409,7 @@
     outline-offset: 2px;
   }
   
-  /* Level popup */
+  /* level popup */
   
   .level-popup {
     position: absolute;
