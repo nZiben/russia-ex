@@ -43,71 +43,60 @@ export function createMapView(options: MapOptions): MapView {
       )} ${geometry.height.toFixed(2)}`
     );
     svg.setAttribute('aria-label', 'Cartogram of Russian regions');
+    const silhouetteLayer = createSvgElement('g');
+    silhouetteLayer.classList.add('map-silhouette');
 
-    const defs = createSvgElement('defs');
-    svg.appendChild(defs);
+    for (const rect of geometry.silhouetteRects) {
+      const rectEl = createSvgElement('rect');
+      rectEl.classList.add('map-silhouette-cell');
+      rectEl.setAttribute('x', rect.x.toFixed(2));
+      rectEl.setAttribute('y', rect.y.toFixed(2));
+      rectEl.setAttribute('width', rect.width.toFixed(2));
+      rectEl.setAttribute('height', rect.height.toFixed(2));
+      rectEl.setAttribute('rx', String(rect.radius ?? 0));
+      rectEl.setAttribute('ry', String(rect.radius ?? 0));
+      silhouetteLayer.appendChild(rectEl);
+    }
 
-    for (const component of geometry.components) {
-      const clipPath = createSvgElement('clipPath');
-      clipPath.id = `clip-${component.id}`;
-      clipPath.setAttribute('clipPathUnits', 'userSpaceOnUse');
+    svg.appendChild(silhouetteLayer);
 
-      for (const rect of component.clipRects) {
-        const rectEl = createSvgElement('rect');
-        rectEl.setAttribute('x', rect.x.toFixed(2));
-        rectEl.setAttribute('y', rect.y.toFixed(2));
-        rectEl.setAttribute('width', rect.width.toFixed(2));
-        rectEl.setAttribute('height', rect.height.toFixed(2));
-        rectEl.setAttribute('rx', String(rect.radius ?? 0));
-        rectEl.setAttribute('ry', String(rect.radius ?? 0));
-        clipPath.appendChild(rectEl);
-      }
+    for (const shape of geometry.shapes) {
+      const group = createSvgElement('g');
+      group.classList.add('region-group');
 
-      defs.appendChild(clipPath);
+      const path = createSvgElement('path');
+      path.classList.add('region-shape');
+      path.dataset.regionId = shape.region.id;
+      path.dataset.level = currentState[shape.region.id] ?? 'NEVER';
+      path.dataset.districtId = shape.region.districtId;
+      path.setAttribute('d', polygonToPath(shape.polygon));
+      path.setAttribute('tabindex', '0');
+      path.setAttribute('role', 'button');
 
-      const componentLayer = createSvgElement('g');
-      componentLayer.setAttribute('clip-path', `url(#clip-${component.id})`);
+      const title = currentLocale === 'ru' ? shape.region.fullNameRu : shape.region.fullNameEn;
+      path.setAttribute('aria-label', title);
 
-      for (const shape of component.shapes) {
-        const group = createSvgElement('g');
-        group.classList.add('region-group');
+      path.addEventListener('click', () => {
+        onRegionClick(shape.region, path);
+      });
 
-        const path = createSvgElement('path');
-        path.classList.add('region-shape');
-        path.dataset.regionId = shape.region.id;
-        path.dataset.level = currentState[shape.region.id] ?? 'NEVER';
-        path.dataset.districtId = shape.region.districtId;
-        path.setAttribute('d', polygonToPath(shape.polygon));
-        path.setAttribute('tabindex', '0');
-        path.setAttribute('role', 'button');
-
-        const title = currentLocale === 'ru' ? shape.region.fullNameRu : shape.region.fullNameEn;
-        path.setAttribute('aria-label', title);
-
-        path.addEventListener('click', () => {
+      path.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
           onRegionClick(shape.region, path);
-        });
+        }
+      });
 
-        path.addEventListener('keydown', (event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            onRegionClick(shape.region, path);
-          }
-        });
+      const label = createSvgElement('text');
+      label.classList.add('region-label');
+      label.setAttribute('x', shape.label.x.toFixed(2));
+      label.setAttribute('y', shape.label.y.toFixed(2));
+      label.setAttribute('font-size', shape.labelFontSize.toFixed(2));
+      label.textContent = shape.region.shortLabel;
 
-        const label = createSvgElement('text');
-        label.classList.add('region-label');
-        label.setAttribute('x', shape.label.x.toFixed(2));
-        label.setAttribute('y', shape.label.y.toFixed(2));
-        label.setAttribute('font-size', shape.labelFontSize.toFixed(2));
-        label.textContent = shape.region.shortLabel;
-
-        group.appendChild(path);
-        group.appendChild(label);
-        componentLayer.appendChild(group);
-      }
-
-      svg.appendChild(componentLayer);
+      group.appendChild(path);
+      group.appendChild(label);
+      svg.appendChild(group);
     }
 
     container.appendChild(svg);

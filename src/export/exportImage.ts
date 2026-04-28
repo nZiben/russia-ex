@@ -50,58 +50,52 @@ export function exportMapImage(state: RegionLevelState, locale: Locale): void {
   ctx.font = '16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
   ctx.fillText(translate(locale, 'export.imageSubtitle'), paddingX, paddingY + 56);
 
-  for (const component of geometry.components) {
-    ctx.save();
+  ctx.fillStyle = '#fff9f2';
+  for (const rect of geometry.silhouetteRects) {
+    const x = mapOriginX + (rect.x - geometry.minX) * mapScale;
+    const y = mapOriginY + (rect.y - geometry.minY) * mapScale;
+    const width = rect.width * mapScale;
+    const height = rect.height * mapScale;
+    const radius = (rect.radius ?? 0) * mapScale;
+
     ctx.beginPath();
+    if ('roundRect' in ctx) {
+      ctx.roundRect(x, y, width, height, radius);
+    } else {
+      ctx.rect(x, y, width, height);
+    }
+    ctx.fill();
+  }
 
-    for (const rect of component.clipRects) {
-      const x = mapOriginX + (rect.x - geometry.minX) * mapScale;
-      const y = mapOriginY + (rect.y - geometry.minY) * mapScale;
-      const width = rect.width * mapScale;
-      const height = rect.height * mapScale;
-      const radius = (rect.radius ?? 0) * mapScale;
+  for (const shape of geometry.shapes) {
+    const levelId = state[shape.region.id] ?? 'NEVER';
+    const level = getLevelById(levelId);
 
-      if ('roundRect' in ctx) {
-        ctx.roundRect(x, y, width, height, radius);
+    ctx.beginPath();
+    shape.polygon.forEach((point, index) => {
+      const x = mapOriginX + (point.x - geometry.minX) * mapScale;
+      const y = mapOriginY + (point.y - geometry.minY) * mapScale;
+      if (index === 0) {
+        ctx.moveTo(x, y);
       } else {
-        ctx.rect(x, y, width, height);
+        ctx.lineTo(x, y);
       }
-    }
+    });
+    ctx.closePath();
 
-    ctx.clip();
+    ctx.fillStyle = level.color;
+    ctx.strokeStyle = '#111111';
+    ctx.lineWidth = 1.8;
+    ctx.fill();
+    ctx.stroke();
 
-    for (const shape of component.shapes) {
-      const levelId = state[shape.region.id] ?? 'NEVER';
-      const level = getLevelById(levelId);
-
-      ctx.beginPath();
-      shape.polygon.forEach((point, index) => {
-        const x = mapOriginX + (point.x - geometry.minX) * mapScale;
-        const y = mapOriginY + (point.y - geometry.minY) * mapScale;
-        if (index === 0) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
-        }
-      });
-      ctx.closePath();
-
-      ctx.fillStyle = level.color;
-      ctx.strokeStyle = '#111111';
-      ctx.lineWidth = 2.2;
-      ctx.fill();
-      ctx.stroke();
-
-      const labelX = mapOriginX + (shape.label.x - geometry.minX) * mapScale;
-      const labelY = mapOriginY + (shape.label.y - geometry.minY) * mapScale;
-      ctx.fillStyle = '#111111';
-      ctx.font = `${Math.max(8, shape.labelFontSize * mapScale)}px system-ui, -apple-system, BlinkMacSystemFont, sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(shape.region.shortLabel, labelX, labelY);
-    }
-
-    ctx.restore();
+    const labelX = mapOriginX + (shape.label.x - geometry.minX) * mapScale;
+    const labelY = mapOriginY + (shape.label.y - geometry.minY) * mapScale;
+    ctx.fillStyle = '#111111';
+    ctx.font = `${Math.max(8, shape.labelFontSize * mapScale)}px system-ui, -apple-system, BlinkMacSystemFont, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(shape.region.shortLabel, labelX, labelY);
   }
 
   ctx.textAlign = 'start';

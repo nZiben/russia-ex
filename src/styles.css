@@ -190,6 +190,10 @@ body {
   overflow: visible;
 }
 
+.map-silhouette-cell {
+  fill: rgba(255, 249, 242, 0.96);
+}
+
 .region-group {
   transform-origin: center;
   transition: transform 0.12s ease;
@@ -202,7 +206,7 @@ body {
 .region-shape {
   fill: var(--level-never);
   stroke: var(--page-ink);
-  stroke-width: 4;
+  stroke-width: 3.1;
   vector-effect: non-scaling-stroke;
   cursor: pointer;
   transition:
@@ -216,6 +220,9 @@ body {
   font-weight: 700;
   text-anchor: middle;
   dominant-baseline: middle;
+  paint-order: stroke fill;
+  stroke: rgba(255, 249, 242, 0.7);
+  stroke-width: 2px;
   pointer-events: none;
 }
 
