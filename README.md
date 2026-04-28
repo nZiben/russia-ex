@@ -24,6 +24,21 @@ It lets you mark where you’ve lived, stayed, travelled, worked or just passed 
 
 ---
 
+## Design Help Wanted
+
+The interaction works, but the page design is still very much in progress.
+
+We would love help with:
+
+- improving the overall page composition and spacing
+- making the cartogram feel more recognizably like Russia while staying readable
+- refining typography, legend balance, and mobile layout
+- pushing the visual style closer to a polished playful map instead of a rough prototype
+
+If you are good at interface design, cartograms, or editorial-style web visuals, contributions and ideas would be very welcome.
+
+---
+
 ## Tech stack
 
 - Language: TypeScript
