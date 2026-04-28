@@ -1,23 +1,27 @@
 import type { RegionLevelState } from '../state/types';
+import { LEVELS, getLevelById } from '../config/levels';
 import { regions } from '../config/regions';
-import { getLevelById } from '../config/levels';
 import { computeScore } from '../state/scoring';
 import type { Locale } from '../i18n/i18n';
 import { translate } from '../i18n/i18n';
 
 export function exportMapImage(state: RegionLevelState, locale: Locale): void {
-  const maxRow = Math.max(...regions.map((r) => r.row));
-  const maxCol = Math.max(...regions.map((r) => r.col));
+  const maxRow = Math.max(...regions.map((r) => r.row + (r.height ?? 1) - 1));
+  const maxCol = Math.max(...regions.map((r) => r.col + (r.width ?? 1) - 1));
 
-  const tileSize = 28;
+  const tileSize = 34;
   const gap = 4;
-  const paddingX = 40;
-  const paddingY = 60;
-  const headerHeight = 60;
+  const paddingX = 42;
+  const paddingY = 36;
+  const headerHeight = 88;
+  const footerHeight = 96;
+  const legendWidth = 176;
+  const legendGap = 34;
 
-  const width = paddingX * 2 + maxCol * tileSize + (maxCol - 1) * gap;
-  const height =
-    paddingY * 2 + headerHeight + maxRow * tileSize + (maxRow - 1) * gap + 40;
+  const mapWidth = maxCol * tileSize + (maxCol - 1) * gap;
+  const mapHeight = maxRow * tileSize + (maxRow - 1) * gap;
+  const width = paddingX * 2 + mapWidth + legendGap + legendWidth;
+  const height = paddingY * 2 + headerHeight + mapHeight + footerHeight;
 
   const canvas = document.createElement('canvas');
   const dpr = window.devicePixelRatio || 1;
@@ -28,69 +32,97 @@ export function exportMapImage(state: RegionLevelState, locale: Locale): void {
   if (!ctx) return;
   ctx.scale(dpr, dpr);
 
-  // Background
-  ctx.fillStyle = '#020617';
+  const summary = computeScore(state);
+  const visitedCount = regions.length - summary.perLevelCounts.NEVER;
+  const mapOriginX = paddingX;
+  const mapOriginY = paddingY + headerHeight;
+  const legendX = mapOriginX + mapWidth + legendGap;
+  const legendY = mapOriginY + 8;
+
+  ctx.fillStyle = '#e6b0b0';
   ctx.fillRect(0, 0, width, height);
 
-  // Title & subtitle
-  ctx.fillStyle = '#e5e7eb';
-  ctx.font = 'bold 22px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
-  const title = translate(locale, 'export.imageTitle');
-  ctx.fillText(title, paddingX, paddingY);
+  ctx.fillStyle = '#111111';
+  ctx.textBaseline = 'alphabetic';
+  ctx.font = '700 34px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.fillText(translate(locale, 'export.imageTitle'), paddingX, paddingY + 30);
 
-  ctx.font = '14px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
-  ctx.fillStyle = '#9ca3af';
-  const subtitle = translate(locale, 'export.imageSubtitle');
-  ctx.fillText(subtitle, paddingX, paddingY + 24);
+  ctx.font = '16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.fillText(translate(locale, 'export.imageSubtitle'), paddingX, paddingY + 56);
 
-  const originY = paddingY + headerHeight;
-
-  // Tiles
   for (const region of regions) {
     const levelId = state[region.id] ?? 'NEVER';
     const level = getLevelById(levelId);
-    const x = paddingX + (region.col - 1) * (tileSize + gap);
-    const y = originY + (region.row - 1) * (tileSize + gap);
+    const tileWidth = (region.width ?? 1) * tileSize + ((region.width ?? 1) - 1) * gap;
+    const tileHeight = (region.height ?? 1) * tileSize + ((region.height ?? 1) - 1) * gap;
+    const x = mapOriginX + (region.col - 1) * (tileSize + gap);
+    const y = mapOriginY + (region.row - 1) * (tileSize + gap);
 
     ctx.fillStyle = level.color;
-    // rounded rect if available
-    if ((ctx as any).roundRect) {
-      (ctx as any).roundRect(x, y, tileSize, tileSize, 5);
-      ctx.fill();
+    ctx.strokeStyle = '#111111';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    if ('roundRect' in ctx) {
+      ctx.roundRect(x, y, tileWidth, tileHeight, 6);
     } else {
-      ctx.beginPath();
-      ctx.rect(x, y, tileSize, tileSize);
-      ctx.fill();
+      ctx.rect(x, y, tileWidth, tileHeight);
     }
+    ctx.fill();
+    ctx.stroke();
 
-    // Label
-    ctx.fillStyle = '#f9fafb';
-    ctx.font = '10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
-    const text = region.shortLabel;
-    const textWidth = ctx.measureText(text).width;
-    ctx.fillText(text, x + tileSize / 2 - textWidth / 2, y + tileSize / 2 + 3);
+    ctx.fillStyle = '#111111';
+    ctx.font = '700 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
+    const textWidth = ctx.measureText(region.shortLabel).width;
+    ctx.fillText(region.shortLabel, x + tileWidth / 2 - textWidth / 2, y + tileHeight / 2 + 4);
   }
 
-  // Score line
-  const summary = computeScore(state);
-  ctx.font = '13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
-  ctx.fillStyle = '#e5e7eb';
+  const legendItemHeight = 38;
+  ctx.font = '700 20px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.fillStyle = '#111111';
+  ctx.fillText(translate(locale, 'legend.title'), legendX, legendY - 18);
 
-  const scoreLabel = translate(locale, 'export.scoreLabel');
-  const scoreText = `${scoreLabel}: ${summary.totalScore} / ${summary.maxScore}`;
-  ctx.fillText(scoreText, paddingX, height - paddingY - 10);
+  LEVELS.forEach((level, index) => {
+    const itemY = legendY + index * legendItemHeight;
 
-  // Footer
-  ctx.fillStyle = '#6b7280';
-  ctx.font = '11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
-  const footer = translate(locale, 'export.footer');
+    ctx.fillStyle = level.color;
+    ctx.strokeStyle = '#111111';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.rect(legendX, itemY, legendWidth, legendItemHeight);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#111111';
+    ctx.font = '700 16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.fillText(translate(locale, level.nameKey), legendX + 14, itemY + 24);
+
+    const weight = String(level.weight);
+    const weightWidth = ctx.measureText(weight).width;
+    ctx.fillText(weight, legendX + legendWidth - 14 - weightWidth, itemY + 24);
+  });
+
+  const scoreY = height - paddingY - 30;
+
+  ctx.fillStyle = '#111111';
+  ctx.font = '700 20px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.fillText(translate(locale, 'export.scoreLabel'), paddingX, scoreY - 42);
+
+  ctx.font = '700 38px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.fillText(`${summary.totalScore} / ${summary.maxScore}`, paddingX, scoreY - 2);
+
+  ctx.font = '15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
   ctx.fillText(
-    footer,
-    width - paddingX - ctx.measureText(footer).width,
-    height - paddingY - 10
+    translate(locale, 'export.visitedLabel')
+      .replace('{visited}', String(visitedCount))
+      .replace('{total}', String(regions.length)),
+    paddingX,
+    scoreY + 24
   );
 
-  // Trigger download
+  const footer = translate(locale, 'export.footer').toLowerCase();
+  ctx.font = '14px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.fillText(footer, width - paddingX - ctx.measureText(footer).width, height - paddingY);
+
   canvas.toBlob((blob) => {
     if (!blob) return;
     const url = URL.createObjectURL(blob);

@@ -67,8 +67,8 @@ export function createLevelPopup(config: PopupConfig): LevelPopup {
   document.body.appendChild(container);
 
   let isOpen = false;
-  let currentLocale: Locale = 'en';
   let currentOnSelect: ((level: LevelId) => void) | null = null;
+  let currentRegion: Region | null = null;
 
   function applyLocaleToButtons(locale: Locale): void {
     for (const [id, btn] of levelButtons.entries()) {
@@ -91,8 +91,8 @@ export function createLevelPopup(config: PopupConfig): LevelPopup {
 
   function positionPopup(anchor: HTMLElement): void {
     const rect = anchor.getBoundingClientRect();
-    const width = 220;
-    const approxHeight = 200;
+    const width = 240;
+    const approxHeight = 280;
     const scrollX = window.scrollX || window.pageXOffset;
     const scrollY = window.scrollY || window.pageYOffset;
 
@@ -111,8 +111,8 @@ export function createLevelPopup(config: PopupConfig): LevelPopup {
 
   function open(configOpen: OpenConfig): void {
     const { region, anchorElement, currentLevelId, locale, onSelect } = configOpen;
-    currentLocale = locale;
     currentOnSelect = onSelect;
+    currentRegion = region;
 
     const label = locale === 'ru' ? region.fullNameRu : region.fullNameEn;
     titleEl.textContent = label;
@@ -135,6 +135,7 @@ export function createLevelPopup(config: PopupConfig): LevelPopup {
     container.hidden = true;
     isOpen = false;
     currentOnSelect = null;
+    currentRegion = null;
   }
 
   for (const [levelId, btn] of levelButtons.entries()) {
@@ -170,8 +171,10 @@ export function createLevelPopup(config: PopupConfig): LevelPopup {
   );
 
   function updateLocale(locale: Locale): void {
-    currentLocale = locale;
     if (!isOpen) return;
+    if (currentRegion) {
+      titleEl.textContent = locale === 'ru' ? currentRegion.fullNameRu : currentRegion.fullNameEn;
+    }
     applyLocaleToButtons(locale);
   }
 

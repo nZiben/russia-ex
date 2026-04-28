@@ -9,7 +9,7 @@ export const regions: Region[] = [
     fullNameRu: 'Калининградская область',
     row: 5,
     col: 1,
-    districtId: 'northwestern'
+    districtId: 'northwestern',
   },
   {
     id: 'pskov_oblast',
@@ -18,7 +18,7 @@ export const regions: Region[] = [
     fullNameRu: 'Псковская область',
     row: 4,
     col: 2,
-    districtId: 'northwestern'
+    districtId: 'northwestern',
   },
   {
     id: 'leningrad_oblast',
@@ -27,7 +27,7 @@ export const regions: Region[] = [
     fullNameRu: 'Ленинградская область',
     row: 3,
     col: 3,
-    districtId: 'northwestern'
+    districtId: 'northwestern',
   },
   {
     id: 'saint_petersburg',
@@ -36,7 +36,7 @@ export const regions: Region[] = [
     fullNameRu: 'Санкт-Петербург',
     row: 3,
     col: 4,
-    districtId: 'northwestern'
+    districtId: 'northwestern',
   },
   {
     id: 'novgorod_oblast',
@@ -45,7 +45,7 @@ export const regions: Region[] = [
     fullNameRu: 'Новгородская область',
     row: 4,
     col: 3,
-    districtId: 'northwestern'
+    districtId: 'northwestern',
   },
   {
     id: 'murmansk_oblast',
@@ -54,7 +54,9 @@ export const regions: Region[] = [
     fullNameRu: 'Мурманская область',
     row: 1,
     col: 4,
-    districtId: 'northwestern'
+    width: 2,
+    height: 2,
+    districtId: 'northwestern',
   },
   {
     id: 'karelia_republic',
@@ -63,7 +65,7 @@ export const regions: Region[] = [
     fullNameRu: 'Республика Карелия',
     row: 2,
     col: 3,
-    districtId: 'northwestern'
+    districtId: 'northwestern',
   },
   {
     id: 'arkhangelsk_oblast',
@@ -72,7 +74,7 @@ export const regions: Region[] = [
     fullNameRu: 'Архангельская область',
     row: 1,
     col: 6,
-    districtId: 'northwestern'
+    districtId: 'northwestern',
   },
   {
     id: 'nenets_ao',
@@ -81,7 +83,8 @@ export const regions: Region[] = [
     fullNameRu: 'Ненецкий автономный округ',
     row: 1,
     col: 7,
-    districtId: 'northwestern'
+    width: 2,
+    districtId: 'northwestern',
   },
   {
     id: 'komi_republic',
@@ -90,7 +93,8 @@ export const regions: Region[] = [
     fullNameRu: 'Республика Коми',
     row: 2,
     col: 6,
-    districtId: 'northwestern'
+    height: 2,
+    districtId: 'northwestern',
   },
   {
     id: 'vologda_oblast',
@@ -99,7 +103,7 @@ export const regions: Region[] = [
     fullNameRu: 'Вологодская область',
     row: 3,
     col: 5,
-    districtId: 'northwestern'
+    districtId: 'northwestern',
   },
 
   // Central FD
@@ -110,7 +114,7 @@ export const regions: Region[] = [
     fullNameRu: 'Тверская область',
     row: 4,
     col: 4,
-    districtId: 'central'
+    districtId: 'central',
   },
   {
     id: 'yaroslavl_oblast',
@@ -119,7 +123,7 @@ export const regions: Region[] = [
     fullNameRu: 'Ярославская область',
     row: 4,
     col: 5,
-    districtId: 'central'
+    districtId: 'central',
   },
   {
     id: 'kostroma_oblast',
@@ -128,7 +132,7 @@ export const regions: Region[] = [
     fullNameRu: 'Костромская область',
     row: 4,
     col: 6,
-    districtId: 'central'
+    districtId: 'central',
   },
   {
     id: 'ivanovo_oblast',
@@ -137,7 +141,7 @@ export const regions: Region[] = [
     fullNameRu: 'Ивановская область',
     row: 5,
     col: 6,
-    districtId: 'central'
+    districtId: 'central',
   },
   {
     id: 'smolensk_oblast',
@@ -146,7 +150,7 @@ export const regions: Region[] = [
     fullNameRu: 'Смоленская область',
     row: 5,
     col: 3,
-    districtId: 'central'
+    districtId: 'central',
   },
   {
     id: 'moscow_city',
@@ -155,7 +159,7 @@ export const regions: Region[] = [
     fullNameRu: 'Москва (город федерального значения)',
     row: 5,
     col: 4,
-    districtId: 'central'
+    districtId: 'central',
   },
   {
     id: 'moscow_oblast',
@@ -164,7 +168,7 @@ export const regions: Region[] = [
     fullNameRu: 'Московская область',
     row: 5,
     col: 5,
-    districtId: 'central'
+    districtId: 'central',
   },
   {
     id: 'vladimir_oblast',
@@ -173,7 +177,7 @@ export const regions: Region[] = [
     fullNameRu: 'Владимирская область',
     row: 5,
     col: 7,
-    districtId: 'central'
+    districtId: 'central',
   },
   {
     id: 'kaluga_oblast',
@@ -182,7 +186,7 @@ export const regions: Region[] = [
     fullNameRu: 'Калужская область',
     row: 6,
     col: 4,
-    districtId: 'central'
+    districtId: 'central',
   },
   {
     id: 'oryol_oblast',
@@ -191,7 +195,7 @@ export const regions: Region[] = [
     fullNameRu: 'Орловская область',
     row: 6,
     col: 3,
-    districtId: 'central'
+    districtId: 'central',
   },
   {
     id: 'bryansk_oblast',
@@ -200,7 +204,7 @@ export const regions: Region[] = [
     fullNameRu: 'Брянская область',
     row: 6,
     col: 2,
-    districtId: 'central'
+    districtId: 'central',
   },
   {
     id: 'ryazan_oblast',
@@ -209,7 +213,7 @@ export const regions: Region[] = [
     fullNameRu: 'Рязанская область',
     row: 6,
     col: 6,
-    districtId: 'central'
+    districtId: 'central',
   },
   {
     id: 'tula_oblast',
@@ -218,7 +222,7 @@ export const regions: Region[] = [
     fullNameRu: 'Тульская область',
     row: 6,
     col: 5,
-    districtId: 'central'
+    districtId: 'central',
   },
   {
     id: 'kursk_oblast',
@@ -227,7 +231,7 @@ export const regions: Region[] = [
     fullNameRu: 'Курская область',
     row: 7,
     col: 3,
-    districtId: 'central'
+    districtId: 'central',
   },
   {
     id: 'belgorod_oblast',
@@ -236,7 +240,7 @@ export const regions: Region[] = [
     fullNameRu: 'Белгородская область',
     row: 7,
     col: 4,
-    districtId: 'central'
+    districtId: 'central',
   },
   {
     id: 'voronezh_oblast',
@@ -245,7 +249,7 @@ export const regions: Region[] = [
     fullNameRu: 'Воронежская область',
     row: 7,
     col: 5,
-    districtId: 'central'
+    districtId: 'central',
   },
   {
     id: 'lipetsk_oblast',
@@ -254,7 +258,7 @@ export const regions: Region[] = [
     fullNameRu: 'Липецкая область',
     row: 6,
     col: 7,
-    districtId: 'central'
+    districtId: 'central',
   },
   {
     id: 'tambov_oblast',
@@ -263,7 +267,7 @@ export const regions: Region[] = [
     fullNameRu: 'Тамбовская область',
     row: 7,
     col: 6,
-    districtId: 'central'
+    districtId: 'central',
   },
 
   // Volga FD
@@ -274,7 +278,7 @@ export const regions: Region[] = [
     fullNameRu: 'Пензенская область',
     row: 7,
     col: 7,
-    districtId: 'volga'
+    districtId: 'volga',
   },
   {
     id: 'nizhny_novgorod_oblast',
@@ -283,7 +287,7 @@ export const regions: Region[] = [
     fullNameRu: 'Нижегородская область',
     row: 5,
     col: 9,
-    districtId: 'volga'
+    districtId: 'volga',
   },
   {
     id: 'mari_el_republic',
@@ -292,7 +296,7 @@ export const regions: Region[] = [
     fullNameRu: 'Республика Марий Эл',
     row: 4,
     col: 9,
-    districtId: 'volga'
+    districtId: 'volga',
   },
   {
     id: 'chuvashia_republic',
@@ -301,7 +305,7 @@ export const regions: Region[] = [
     fullNameRu: 'Чувашская Республика',
     row: 5,
     col: 10,
-    districtId: 'volga'
+    districtId: 'volga',
   },
   {
     id: 'mordovia_republic',
@@ -310,7 +314,7 @@ export const regions: Region[] = [
     fullNameRu: 'Республика Мордовия',
     row: 6,
     col: 9,
-    districtId: 'volga'
+    districtId: 'volga',
   },
   {
     id: 'ulyanovsk_oblast',
@@ -319,7 +323,7 @@ export const regions: Region[] = [
     fullNameRu: 'Ульяновская область',
     row: 6,
     col: 10,
-    districtId: 'volga'
+    districtId: 'volga',
   },
   {
     id: 'samara_oblast',
@@ -328,7 +332,7 @@ export const regions: Region[] = [
     fullNameRu: 'Самарская область',
     row: 7,
     col: 10,
-    districtId: 'volga'
+    districtId: 'volga',
   },
   {
     id: 'saratov_oblast',
@@ -337,7 +341,7 @@ export const regions: Region[] = [
     fullNameRu: 'Саратовская область',
     row: 7,
     col: 9,
-    districtId: 'volga'
+    districtId: 'volga',
   },
   {
     id: 'tatarstan_republic',
@@ -346,7 +350,7 @@ export const regions: Region[] = [
     fullNameRu: 'Республика Татарстан',
     row: 6,
     col: 8,
-    districtId: 'volga'
+    districtId: 'volga',
   },
   {
     id: 'kirov_oblast',
@@ -355,7 +359,7 @@ export const regions: Region[] = [
     fullNameRu: 'Кировская область',
     row: 4,
     col: 8,
-    districtId: 'volga'
+    districtId: 'volga',
   },
   {
     id: 'udmurtia_republic',
@@ -364,7 +368,7 @@ export const regions: Region[] = [
     fullNameRu: 'Удмуртская Республика',
     row: 5,
     col: 8,
-    districtId: 'volga'
+    districtId: 'volga',
   },
   {
     id: 'perm_krai',
@@ -373,7 +377,7 @@ export const regions: Region[] = [
     fullNameRu: 'Пермский край',
     row: 4,
     col: 10,
-    districtId: 'volga'
+    districtId: 'volga',
   },
   {
     id: 'bashkortostan_republic',
@@ -382,7 +386,7 @@ export const regions: Region[] = [
     fullNameRu: 'Республика Башкортостан',
     row: 6,
     col: 11,
-    districtId: 'volga'
+    districtId: 'volga',
   },
   {
     id: 'orenburg_oblast',
@@ -391,7 +395,7 @@ export const regions: Region[] = [
     fullNameRu: 'Оренбургская область',
     row: 7,
     col: 11,
-    districtId: 'volga'
+    districtId: 'volga',
   },
 
   // Ural FD
@@ -402,7 +406,7 @@ export const regions: Region[] = [
     fullNameRu: 'Свердловская область',
     row: 4,
     col: 11,
-    districtId: 'ural'
+    districtId: 'ural',
   },
   {
     id: 'chelyabinsk_oblast',
@@ -411,7 +415,7 @@ export const regions: Region[] = [
     fullNameRu: 'Челябинская область',
     row: 6,
     col: 12,
-    districtId: 'ural'
+    districtId: 'ural',
   },
   {
     id: 'kurgan_oblast',
@@ -420,7 +424,7 @@ export const regions: Region[] = [
     fullNameRu: 'Курганская область',
     row: 5,
     col: 12,
-    districtId: 'ural'
+    districtId: 'ural',
   },
   {
     id: 'tyumen_oblast',
@@ -429,7 +433,7 @@ export const regions: Region[] = [
     fullNameRu: 'Тюменская область',
     row: 4,
     col: 12,
-    districtId: 'ural'
+    districtId: 'ural',
   },
   {
     id: 'yamalo_nenets_ao',
@@ -438,7 +442,7 @@ export const regions: Region[] = [
     fullNameRu: 'Ямало-Ненецкий автономный округ',
     row: 3,
     col: 12,
-    districtId: 'ural'
+    districtId: 'ural',
   },
   {
     id: 'khanty_mansi_ao',
@@ -447,7 +451,7 @@ export const regions: Region[] = [
     fullNameRu: 'Ханты-Мансийский автономный округ — Югра',
     row: 3,
     col: 11,
-    districtId: 'ural'
+    districtId: 'ural',
   },
 
   // Siberian FD
@@ -458,7 +462,7 @@ export const regions: Region[] = [
     fullNameRu: 'Омская область',
     row: 5,
     col: 13,
-    districtId: 'siberian'
+    districtId: 'siberian',
   },
   {
     id: 'novosibirsk_oblast',
@@ -467,7 +471,7 @@ export const regions: Region[] = [
     fullNameRu: 'Новосибирская область',
     row: 6,
     col: 13,
-    districtId: 'siberian'
+    districtId: 'siberian',
   },
   {
     id: 'tomsk_oblast',
@@ -476,7 +480,7 @@ export const regions: Region[] = [
     fullNameRu: 'Томская область',
     row: 5,
     col: 14,
-    districtId: 'siberian'
+    districtId: 'siberian',
   },
   {
     id: 'kemerovo_oblast',
@@ -485,7 +489,7 @@ export const regions: Region[] = [
     fullNameRu: 'Кемеровская область',
     row: 6,
     col: 14,
-    districtId: 'siberian'
+    districtId: 'siberian',
   },
   {
     id: 'altai_krai',
@@ -494,7 +498,7 @@ export const regions: Region[] = [
     fullNameRu: 'Алтайский край',
     row: 7,
     col: 13,
-    districtId: 'siberian'
+    districtId: 'siberian',
   },
   {
     id: 'altai_republic',
@@ -503,7 +507,7 @@ export const regions: Region[] = [
     fullNameRu: 'Республика Алтай',
     row: 7,
     col: 14,
-    districtId: 'siberian'
+    districtId: 'siberian',
   },
   {
     id: 'khakassia_republic',
@@ -512,16 +516,17 @@ export const regions: Region[] = [
     fullNameRu: 'Республика Хакасия',
     row: 5,
     col: 15,
-    districtId: 'siberian'
+    districtId: 'siberian',
   },
   {
     id: 'krasnoyarsk_krai',
-    shortLabel: 'Krasn',
+    shortLabel: 'Kras',
     fullNameEn: 'Krasnoyarsk Krai',
     fullNameRu: 'Красноярский край',
     row: 4,
     col: 15,
-    districtId: 'siberian'
+    width: 2,
+    districtId: 'siberian',
   },
   {
     id: 'tuva_republic',
@@ -530,7 +535,7 @@ export const regions: Region[] = [
     fullNameRu: 'Республика Тыва',
     row: 6,
     col: 15,
-    districtId: 'siberian'
+    districtId: 'siberian',
   },
   {
     id: 'buryatia_republic',
@@ -539,7 +544,7 @@ export const regions: Region[] = [
     fullNameRu: 'Республика Бурятия',
     row: 6,
     col: 16,
-    districtId: 'siberian'
+    districtId: 'siberian',
   },
   {
     id: 'irkutsk_oblast',
@@ -548,7 +553,7 @@ export const regions: Region[] = [
     fullNameRu: 'Иркутская область',
     row: 5,
     col: 16,
-    districtId: 'siberian'
+    districtId: 'siberian',
   },
   {
     id: 'zabaykalsky_krai',
@@ -557,7 +562,7 @@ export const regions: Region[] = [
     fullNameRu: 'Забайкальский край',
     row: 5,
     col: 17,
-    districtId: 'siberian'
+    districtId: 'siberian',
   },
 
   // Far Eastern FD
@@ -568,7 +573,8 @@ export const regions: Region[] = [
     fullNameRu: 'Республика Саха (Якутия)',
     row: 3,
     col: 14,
-    districtId: 'far_eastern'
+    width: 2,
+    districtId: 'far_eastern',
   },
   {
     id: 'magadan_oblast',
@@ -577,7 +583,8 @@ export const regions: Region[] = [
     fullNameRu: 'Магаданская область',
     row: 3,
     col: 17,
-    districtId: 'far_eastern'
+    width: 2,
+    districtId: 'far_eastern',
   },
   {
     id: 'kamchatka_krai',
@@ -586,7 +593,8 @@ export const regions: Region[] = [
     fullNameRu: 'Камчатский край',
     row: 2,
     col: 18,
-    districtId: 'far_eastern'
+    height: 2,
+    districtId: 'far_eastern',
   },
   {
     id: 'chukotka_ao',
@@ -595,7 +603,8 @@ export const regions: Region[] = [
     fullNameRu: 'Чукотский автономный округ',
     row: 1,
     col: 18,
-    districtId: 'far_eastern'
+    width: 2,
+    districtId: 'far_eastern',
   },
   {
     id: 'amur_oblast',
@@ -604,7 +613,7 @@ export const regions: Region[] = [
     fullNameRu: 'Амурская область',
     row: 5,
     col: 18,
-    districtId: 'far_eastern'
+    districtId: 'far_eastern',
   },
   {
     id: 'jewish_ao',
@@ -613,7 +622,7 @@ export const regions: Region[] = [
     fullNameRu: 'Еврейская автономная область',
     row: 6,
     col: 18,
-    districtId: 'far_eastern'
+    districtId: 'far_eastern',
   },
   {
     id: 'khabarovsk_krai',
@@ -622,7 +631,8 @@ export const regions: Region[] = [
     fullNameRu: 'Хабаровский край',
     row: 4,
     col: 18,
-    districtId: 'far_eastern'
+    width: 2,
+    districtId: 'far_eastern',
   },
   {
     id: 'primorsky_krai',
@@ -631,7 +641,8 @@ export const regions: Region[] = [
     fullNameRu: 'Приморский край',
     row: 7,
     col: 18,
-    districtId: 'far_eastern'
+    width: 2,
+    districtId: 'far_eastern',
   },
   {
     id: 'sakhalin_oblast',
@@ -640,7 +651,8 @@ export const regions: Region[] = [
     fullNameRu: 'Сахалинская область',
     row: 5,
     col: 19,
-    districtId: 'far_eastern'
+    height: 2,
+    districtId: 'far_eastern',
   },
 
   // Southern FD
@@ -651,7 +663,7 @@ export const regions: Region[] = [
     fullNameRu: 'Краснодарский край',
     row: 8,
     col: 2,
-    districtId: 'southern'
+    districtId: 'southern',
   },
   {
     id: 'adygea_republic',
@@ -660,7 +672,7 @@ export const regions: Region[] = [
     fullNameRu: 'Республика Адыгея',
     row: 8,
     col: 3,
-    districtId: 'southern'
+    districtId: 'southern',
   },
   {
     id: 'rostov_oblast',
@@ -669,7 +681,7 @@ export const regions: Region[] = [
     fullNameRu: 'Ростовская область',
     row: 7,
     col: 2,
-    districtId: 'southern'
+    districtId: 'southern',
   },
   {
     id: 'crimea_republic',
@@ -678,7 +690,7 @@ export const regions: Region[] = [
     fullNameRu: 'Республика Крым',
     row: 8,
     col: 1,
-    districtId: 'southern'
+    districtId: 'southern',
   },
   {
     id: 'sevastopol_city',
@@ -687,7 +699,7 @@ export const regions: Region[] = [
     fullNameRu: 'Севастополь (город федерального значения)',
     row: 9,
     col: 1,
-    districtId: 'southern'
+    districtId: 'southern',
   },
   {
     id: 'volgograd_oblast',
@@ -696,7 +708,7 @@ export const regions: Region[] = [
     fullNameRu: 'Волгоградская область',
     row: 8,
     col: 8,
-    districtId: 'southern'
+    districtId: 'southern',
   },
   {
     id: 'astrakhan_oblast',
@@ -705,7 +717,7 @@ export const regions: Region[] = [
     fullNameRu: 'Астраханская область',
     row: 8,
     col: 9,
-    districtId: 'southern'
+    districtId: 'southern',
   },
   {
     id: 'kalmykia_republic',
@@ -714,7 +726,7 @@ export const regions: Region[] = [
     fullNameRu: 'Республика Калмыкия',
     row: 8,
     col: 7,
-    districtId: 'southern'
+    districtId: 'southern',
   },
 
   // North Caucasian FD
@@ -725,7 +737,7 @@ export const regions: Region[] = [
     fullNameRu: 'Ставропольский край',
     row: 7,
     col: 8,
-    districtId: 'north_caucasian'
+    districtId: 'north_caucasian',
   },
   {
     id: 'karachay_cherkess_republic',
@@ -734,7 +746,7 @@ export const regions: Region[] = [
     fullNameRu: 'Карачаево-Черкесская Республика',
     row: 8,
     col: 4,
-    districtId: 'north_caucasian'
+    districtId: 'north_caucasian',
   },
   {
     id: 'kabardino_balkaria_republic',
@@ -743,7 +755,7 @@ export const regions: Region[] = [
     fullNameRu: 'Кабардино-Балкарская Республика',
     row: 8,
     col: 5,
-    districtId: 'north_caucasian'
+    districtId: 'north_caucasian',
   },
   {
     id: 'north_ossetia_republic',
@@ -752,7 +764,7 @@ export const regions: Region[] = [
     fullNameRu: 'Республика Северная Осетия — Алания',
     row: 8,
     col: 6,
-    districtId: 'north_caucasian'
+    districtId: 'north_caucasian',
   },
   {
     id: 'ingushetia_republic',
@@ -761,7 +773,7 @@ export const regions: Region[] = [
     fullNameRu: 'Республика Ингушетия',
     row: 7,
     col: 12,
-    districtId: 'north_caucasian'
+    districtId: 'north_caucasian',
   },
   {
     id: 'chechnya_republic',
@@ -770,7 +782,7 @@ export const regions: Region[] = [
     fullNameRu: 'Чеченская Республика',
     row: 8,
     col: 10,
-    districtId: 'north_caucasian'
+    districtId: 'north_caucasian',
   },
   {
     id: 'dagestan_republic',
@@ -779,8 +791,8 @@ export const regions: Region[] = [
     fullNameRu: 'Республика Дагестан',
     row: 8,
     col: 11,
-    districtId: 'north_caucasian'
-  }
+    districtId: 'north_caucasian',
+  },
 ];
 
 export const regionsById = new Map<string, Region>(regions.map((r) => [r.id, r]));

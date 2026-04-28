@@ -5,45 +5,45 @@ export const LEVELS: LevelDefinition[] = [
   {
     id: 'LIVED',
     weight: 5,
-    color: '#22c55e',
+    color: '#ff7f8d',
     nameKey: 'level.LIVED.name',
-    descriptionKey: 'level.LIVED.description'
+    descriptionKey: 'level.LIVED.description',
   },
   {
     id: 'SHORT_STAY',
     weight: 4,
-    color: '#0ea5e9',
+    color: '#ffb96c',
     nameKey: 'level.SHORT_STAY.name',
-    descriptionKey: 'level.SHORT_STAY.description'
+    descriptionKey: 'level.SHORT_STAY.description',
   },
   {
     id: 'TRAVELED',
     weight: 3,
-    color: '#6366f1',
+    color: '#ffe48f',
     nameKey: 'level.TRAVELED.name',
-    descriptionKey: 'level.TRAVELED.description'
+    descriptionKey: 'level.TRAVELED.description',
   },
   {
     id: 'BUSINESS_TRIP',
     weight: 2,
-    color: '#f97316',
+    color: '#9de5b5',
     nameKey: 'level.BUSINESS_TRIP.name',
-    descriptionKey: 'level.BUSINESS_TRIP.description'
+    descriptionKey: 'level.BUSINESS_TRIP.description',
   },
   {
     id: 'TRANSIT',
     weight: 1,
-    color: '#eab308',
+    color: '#7da8ff',
     nameKey: 'level.TRANSIT.name',
-    descriptionKey: 'level.TRANSIT.description'
+    descriptionKey: 'level.TRANSIT.description',
   },
   {
     id: 'NEVER',
     weight: 0,
-    color: '#374151',
+    color: '#fff9f2',
     nameKey: 'level.NEVER.name',
-    descriptionKey: 'level.NEVER.description'
-  }
+    descriptionKey: 'level.NEVER.description',
+  },
 ];
 
 export const DEFAULT_LEVEL_ID: LevelId = 'NEVER';

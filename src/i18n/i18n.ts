@@ -5,26 +5,17 @@ const STORAGE_KEY = 'russia-ex-locale-v1';
 const TRANSLATIONS: Record<Locale, Record<string, string>> = {
   en: {
     'app.title': 'RUSSIA-EX',
-    'app.subtitle': 'Interactive footprint map of Russian regions',
-    'app.description':
-      'Mark where you have lived, travelled or just passed through across all federal subjects of Russia. Your data stays in this browser and can be saved as an image.',
+    'app.subtitle': 'Travel footprint across the federal subjects of Russia',
 
     'legend.title': 'Visit levels',
-    'score.totalLabel': 'Total score:',
-    'controls.resetAll': 'Reset all',
-    'controls.saveImage': 'Save as image',
-    'controls.languageLabel': 'Language',
+    'score.totalLabel': 'Score',
+    'score.visitedSummary': 'Visited {visited} of {total} regions',
+    'controls.resetAll': 'Reset',
+    'controls.saveImage': 'Save image',
+    'controls.languageLabel': 'Lang',
 
-    // Map mode
-    'map.overviewTitle': 'Federal districts of Russia',
-    'map.overviewHint': 'Click a district to zoom in and mark individual regions.',
-    'map.districtHint': 'Click tiles to set visit level. Use “Back” to return to all districts.',
-    'controls.backToOverview': 'Back to districts',
+    'popup.chooseLevel': 'Set visit level',
 
-    // Popup
-    'popup.chooseLevel': 'Choose visit level',
-
-    // Levels
     'level.LIVED.name': 'Lived',
     'level.LIVED.description': 'Lived here for a year or more.',
     'level.SHORT_STAY.name': 'Short stay',
@@ -34,37 +25,29 @@ const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     'level.BUSINESS_TRIP.name': 'Business trip',
     'level.BUSINESS_TRIP.description': 'Visited mainly for work.',
     'level.TRANSIT.name': 'Transit',
-    'level.TRANSIT.description':
-      'Only passed through (train, road, airport transfer, etc.).',
+    'level.TRANSIT.description': 'Only passed through (train, road, airport transfer, etc.).',
     'level.NEVER.name': 'Never',
     'level.NEVER.description': 'Have not been here yet.',
 
-    // Export
-    'export.imageTitle': 'My Russia footprint',
-    'export.imageSubtitle': 'Where I have lived, travelled, and passed through',
+    'export.imageTitle': 'RUSSIA-EX',
+    'export.imageSubtitle': 'Travel footprint across the federal subjects of Russia',
     'export.scoreLabel': 'Score',
-    'export.footer': 'Generated with russia-ex'
+    'export.visitedLabel': 'Visited {visited} of {total}',
+    'export.footer': 'russia-ex',
   },
 
   ru: {
     'app.title': 'RUSSIA-EX',
-    'app.subtitle': 'Интерактивная карта «следа» по регионам России',
-    'app.description':
-      'Отметьте, где вы жили, путешествовали или просто проезжали через субъекты РФ. Все данные хранятся только в этом браузере и могут быть сохранены как картинка.',
+    'app.subtitle': 'Карта путешествий по регионам России',
 
     'legend.title': 'Уровни посещения',
-    'score.totalLabel': 'Суммарный счёт:',
-    'controls.resetAll': 'Сбросить всё',
-    'controls.saveImage': 'Сохранить как картинку',
+    'score.totalLabel': 'Счёт',
+    'score.visitedSummary': 'Отмечено {visited} из {total} регионов',
+    'controls.resetAll': 'Сбросить',
+    'controls.saveImage': 'Сохранить',
     'controls.languageLabel': 'Язык',
 
-    'map.overviewTitle': 'Федеральные округа России',
-    'map.overviewHint': 'Нажмите на округ, чтобы приблизить и увидеть регионы внутри.',
-    'map.districtHint':
-      'Кликайте по регионам, чтобы выбрать уровень посещения. Кнопка «Назад» вернёт ко всем округам.',
-    'controls.backToOverview': 'Назад к округам',
-
-    'popup.chooseLevel': 'Выберите уровень посещения',
+    'popup.chooseLevel': 'Выберите уровень',
 
     'level.LIVED.name': 'Жил',
     'level.LIVED.description': 'Жил здесь год и больше.',
@@ -80,11 +63,12 @@ const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     'level.NEVER.name': 'Не был',
     'level.NEVER.description': 'Пока ещё не был здесь.',
 
-    'export.imageTitle': 'Мой след по России',
-    'export.imageSubtitle': 'Где я жил, путешествовал и проезжал транзитом',
+    'export.imageTitle': 'RUSSIA-EX',
+    'export.imageSubtitle': 'Карта путешествий по регионам России',
     'export.scoreLabel': 'Счёт',
-    'export.footer': 'Создано с помощью russia-ex'
-  }
+    'export.visitedLabel': 'Отмечено {visited} из {total}',
+    'export.footer': 'russia-ex',
+  },
 };
 
 export function translate(locale: Locale, key: string): string {
