@@ -54,13 +54,18 @@ export function exportMapImage(state: RegionLevelState, locale: Locale): void {
     ctx.save();
     ctx.beginPath();
 
-    for (const rect of component.maskRects) {
-      ctx.rect(
-        mapOriginX + (rect.x - geometry.minX) * mapScale,
-        mapOriginY + (rect.y - geometry.minY) * mapScale,
-        rect.width * mapScale,
-        rect.height * mapScale
-      );
+    for (const rect of component.clipRects) {
+      const x = mapOriginX + (rect.x - geometry.minX) * mapScale;
+      const y = mapOriginY + (rect.y - geometry.minY) * mapScale;
+      const width = rect.width * mapScale;
+      const height = rect.height * mapScale;
+      const radius = (rect.radius ?? 0) * mapScale;
+
+      if ('roundRect' in ctx) {
+        ctx.roundRect(x, y, width, height, radius);
+      } else {
+        ctx.rect(x, y, width, height);
+      }
     }
 
     ctx.clip();

@@ -10,6 +10,7 @@ export interface Rect {
   y: number;
   width: number;
   height: number;
+  radius?: number;
 }
 
 export interface PolygonBounds {
@@ -35,6 +36,7 @@ export interface CartogramComponent {
   id: string;
   bounds: PolygonBounds;
   maskRects: Rect[];
+  clipRects: Rect[];
   shapes: RegionShape[];
 }
 
@@ -58,8 +60,10 @@ interface OccupiedCell {
 const CELL_SIZE = 100;
 const VIEW_PADDING = CELL_SIZE * 0.45;
 const COMPONENT_PADDING = CELL_SIZE * 1.1;
-const POLYGON_GAP = CELL_SIZE * 0.14;
+const POLYGON_GAP = CELL_SIZE * 0.08;
 const SITE_JITTER = 0.16;
+const CLIP_EXPAND = CELL_SIZE * 0.18;
+const CLIP_RADIUS = CELL_SIZE * 0.28;
 
 const DISTRICT_WARP: Record<DistrictId, { xTilt: number; yTilt: number }> = {
   northwestern: { xTilt: -0.05, yTilt: -0.03 },
@@ -371,6 +375,16 @@ function getComponentBounds(cells: OccupiedCell[]): PolygonBounds {
   return getBounds(points);
 }
 
+function getClipRects(cells: OccupiedCell[]): Rect[] {
+  return cells.map((cell) => ({
+    x: cell.rect.x - CLIP_EXPAND,
+    y: cell.rect.y - CLIP_EXPAND,
+    width: cell.rect.width + CLIP_EXPAND * 2,
+    height: cell.rect.height + CLIP_EXPAND * 2,
+    radius: CLIP_RADIUS,
+  }));
+}
+
 export function polygonToPath(points: Point[]): string {
   if (!points.length) {
     return '';
@@ -438,7 +452,8 @@ export function buildCartogramGeometry(regions: Region[]): CartogramGeometry {
     });
 
     const maskRects = cells.map((cell) => cell.rect);
-    for (const rect of maskRects) {
+    const clipRects = getClipRects(cells);
+    for (const rect of clipRects) {
       visiblePoints.push({ x: rect.x, y: rect.y });
       visiblePoints.push({ x: rect.x + rect.width, y: rect.y + rect.height });
     }
@@ -447,6 +462,7 @@ export function buildCartogramGeometry(regions: Region[]): CartogramGeometry {
       id: componentId,
       bounds: componentBounds,
       maskRects,
+      clipRects,
       shapes,
     });
 

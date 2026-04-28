@@ -52,12 +52,14 @@ export function createMapView(options: MapOptions): MapView {
       clipPath.id = `clip-${component.id}`;
       clipPath.setAttribute('clipPathUnits', 'userSpaceOnUse');
 
-      for (const rect of component.maskRects) {
+      for (const rect of component.clipRects) {
         const rectEl = createSvgElement('rect');
         rectEl.setAttribute('x', rect.x.toFixed(2));
         rectEl.setAttribute('y', rect.y.toFixed(2));
         rectEl.setAttribute('width', rect.width.toFixed(2));
         rectEl.setAttribute('height', rect.height.toFixed(2));
+        rectEl.setAttribute('rx', String(rect.radius ?? 0));
+        rectEl.setAttribute('ry', String(rect.radius ?? 0));
         clipPath.appendChild(rectEl);
       }
 
