@@ -4,13 +4,11 @@ import { regions } from '../config/regions';
 import { computeScore } from '../state/scoring';
 import type { Locale } from '../i18n/i18n';
 import { translate } from '../i18n/i18n';
+import { buildCartogramGeometry } from '../render/cartogram';
 
 export function exportMapImage(state: RegionLevelState, locale: Locale): void {
-  const maxRow = Math.max(...regions.map((r) => r.row + (r.height ?? 1) - 1));
-  const maxCol = Math.max(...regions.map((r) => r.col + (r.width ?? 1) - 1));
-
-  const tileSize = 34;
-  const gap = 4;
+  const geometry = buildCartogramGeometry(regions);
+  const mapScale = 0.28;
   const paddingX = 42;
   const paddingY = 36;
   const headerHeight = 88;
@@ -18,8 +16,8 @@ export function exportMapImage(state: RegionLevelState, locale: Locale): void {
   const legendWidth = 176;
   const legendGap = 34;
 
-  const mapWidth = maxCol * tileSize + (maxCol - 1) * gap;
-  const mapHeight = maxRow * tileSize + (maxRow - 1) * gap;
+  const mapWidth = geometry.width * mapScale;
+  const mapHeight = geometry.height * mapScale;
   const width = paddingX * 2 + mapWidth + legendGap + legendWidth;
   const height = paddingY * 2 + headerHeight + mapHeight + footerHeight;
 
@@ -31,6 +29,8 @@ export function exportMapImage(state: RegionLevelState, locale: Locale): void {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   ctx.scale(dpr, dpr);
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
 
   const summary = computeScore(state);
   const visitedCount = regions.length - summary.perLevelCounts.NEVER;
@@ -50,31 +50,39 @@ export function exportMapImage(state: RegionLevelState, locale: Locale): void {
   ctx.font = '16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
   ctx.fillText(translate(locale, 'export.imageSubtitle'), paddingX, paddingY + 56);
 
-  for (const region of regions) {
-    const levelId = state[region.id] ?? 'NEVER';
+  for (const shape of geometry.shapes) {
+    const levelId = state[shape.region.id] ?? 'NEVER';
     const level = getLevelById(levelId);
-    const tileWidth = (region.width ?? 1) * tileSize + ((region.width ?? 1) - 1) * gap;
-    const tileHeight = (region.height ?? 1) * tileSize + ((region.height ?? 1) - 1) * gap;
-    const x = mapOriginX + (region.col - 1) * (tileSize + gap);
-    const y = mapOriginY + (region.row - 1) * (tileSize + gap);
+
+    ctx.beginPath();
+    shape.polygon.forEach((point, index) => {
+      const x = mapOriginX + (point.x - geometry.minX) * mapScale;
+      const y = mapOriginY + (point.y - geometry.minY) * mapScale;
+      if (index === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+    });
+    ctx.closePath();
 
     ctx.fillStyle = level.color;
     ctx.strokeStyle = '#111111';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    if ('roundRect' in ctx) {
-      ctx.roundRect(x, y, tileWidth, tileHeight, 6);
-    } else {
-      ctx.rect(x, y, tileWidth, tileHeight);
-    }
+    ctx.lineWidth = 2.2;
     ctx.fill();
     ctx.stroke();
 
+    const labelX = mapOriginX + (shape.label.x - geometry.minX) * mapScale;
+    const labelY = mapOriginY + (shape.label.y - geometry.minY) * mapScale;
     ctx.fillStyle = '#111111';
-    ctx.font = '700 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
-    const textWidth = ctx.measureText(region.shortLabel).width;
-    ctx.fillText(region.shortLabel, x + tileWidth / 2 - textWidth / 2, y + tileHeight / 2 + 4);
+    ctx.font = `${Math.max(8, shape.labelFontSize * mapScale)}px system-ui, -apple-system, BlinkMacSystemFont, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(shape.region.shortLabel, labelX, labelY);
   }
+
+  ctx.textAlign = 'start';
+  ctx.textBaseline = 'alphabetic';
 
   const legendItemHeight = 38;
   ctx.font = '700 20px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';

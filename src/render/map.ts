@@ -1,5 +1,8 @@
 import type { Region, RegionLevelState } from '../state/types';
 import type { Locale } from '../i18n/i18n';
+import { buildCartogramGeometry, polygonToPath } from './cartogram';
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
 
 export interface MapView {
   updateAll(state: RegionLevelState): void;
@@ -11,73 +14,89 @@ interface MapOptions {
   regions: Region[];
   state: RegionLevelState;
   locale: Locale;
-  onRegionClick: (region: Region, element: HTMLButtonElement) => void;
+  onRegionClick: (region: Region, element: Element) => void;
+}
+
+function createSvgElement<K extends keyof SVGElementTagNameMap>(
+  tagName: K
+): SVGElementTagNameMap[K] {
+  return document.createElementNS(SVG_NS, tagName);
 }
 
 export function createMapView(options: MapOptions): MapView {
   const { container, regions, onRegionClick } = options;
 
+  const geometry = buildCartogramGeometry(regions);
+
   let currentState: RegionLevelState = options.state;
   let currentLocale: Locale = options.locale;
 
-  function getGridColumnCount(): number {
-    return Math.max(...regions.map((region) => region.col + (region.width ?? 1) - 1));
-  }
-
-  function renderNationGrid(): void {
+  function renderNationMap(): void {
     container.innerHTML = '';
 
-    const grid = document.createElement('div');
-    grid.className = 'map-grid';
-    grid.style.gridTemplateColumns = `repeat(${getGridColumnCount()}, var(--tile-size))`;
+    const svg = createSvgElement('svg');
+    svg.classList.add('map-svg');
+    svg.setAttribute(
+      'viewBox',
+      `${geometry.minX.toFixed(2)} ${geometry.minY.toFixed(2)} ${geometry.width.toFixed(
+        2
+      )} ${geometry.height.toFixed(2)}`
+    );
+    svg.setAttribute('aria-label', 'Cartogram of Russian regions');
 
-    for (const region of regions) {
-      const tile = document.createElement('button');
-      tile.type = 'button';
-      tile.className = 'region-tile';
-      tile.dataset.regionId = region.id;
-      tile.dataset.level = currentState[region.id] ?? 'NEVER';
-      tile.dataset.districtId = region.districtId;
-      tile.style.gridColumn = `${region.col} / span ${region.width ?? 1}`;
-      tile.style.gridRow = `${region.row} / span ${region.height ?? 1}`;
+    for (const shape of geometry.shapes) {
+      const group = createSvgElement('g');
+      group.classList.add('region-group');
 
-      const label = document.createElement('span');
-      label.className = 'region-tile__label';
-      label.textContent = region.shortLabel;
-      tile.appendChild(label);
+      const path = createSvgElement('path');
+      path.classList.add('region-shape');
+      path.dataset.regionId = shape.region.id;
+      path.dataset.level = currentState[shape.region.id] ?? 'NEVER';
+      path.dataset.districtId = shape.region.districtId;
+      path.setAttribute('d', polygonToPath(shape.polygon));
+      path.setAttribute('tabindex', '0');
+      path.setAttribute('role', 'button');
 
-      const title = currentLocale === 'ru' ? region.fullNameRu : region.fullNameEn;
-      tile.title = title;
-      tile.setAttribute('aria-label', title);
+      const title = currentLocale === 'ru' ? shape.region.fullNameRu : shape.region.fullNameEn;
+      path.setAttribute('aria-label', title);
 
-      tile.addEventListener('click', () => {
-        onRegionClick(region, tile);
+      path.addEventListener('click', () => {
+        onRegionClick(shape.region, path);
       });
 
-      tile.addEventListener('keydown', (event) => {
+      path.addEventListener('keydown', (event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-          onRegionClick(region, tile);
+          onRegionClick(shape.region, path);
         }
       });
 
-      grid.appendChild(tile);
+      const label = createSvgElement('text');
+      label.classList.add('region-label');
+      label.setAttribute('x', shape.label.x.toFixed(2));
+      label.setAttribute('y', shape.label.y.toFixed(2));
+      label.setAttribute('font-size', shape.labelFontSize.toFixed(2));
+      label.textContent = shape.region.shortLabel;
+
+      group.appendChild(path);
+      group.appendChild(label);
+      svg.appendChild(group);
     }
 
-    container.appendChild(grid);
+    container.appendChild(svg);
   }
 
   function updateAll(state: RegionLevelState): void {
     currentState = state;
-    renderNationGrid();
+    renderNationMap();
   }
 
   function updateLocale(locale: Locale): void {
     currentLocale = locale;
-    renderNationGrid();
+    renderNationMap();
   }
 
-  renderNationGrid();
+  renderNationMap();
 
   return {
     updateAll,

@@ -8,7 +8,7 @@ interface PopupConfig {
 
 interface OpenConfig {
   region: Region;
-  anchorElement: HTMLElement;
+  anchorElement: Element;
   currentLevelId: LevelId;
   locale: Locale;
   onSelect: (levelId: LevelId) => void;
@@ -89,7 +89,7 @@ export function createLevelPopup(config: PopupConfig): LevelPopup {
     }
   }
 
-  function positionPopup(anchor: HTMLElement): void {
+  function positionPopup(anchor: Element): void {
     const rect = anchor.getBoundingClientRect();
     const width = 240;
     const approxHeight = 280;
