@@ -5,6 +5,13 @@ export interface Point {
   y: number;
 }
 
+export interface Rect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export interface PolygonBounds {
   minX: number;
   minY: number;
@@ -16,11 +23,19 @@ export interface PolygonBounds {
 
 export interface RegionShape {
   region: Region;
+  componentId: string;
   site: Point;
   label: Point;
   polygon: Point[];
   bounds: PolygonBounds;
   labelFontSize: number;
+}
+
+export interface CartogramComponent {
+  id: string;
+  bounds: PolygonBounds;
+  maskRects: Rect[];
+  shapes: RegionShape[];
 }
 
 export interface CartogramGeometry {
@@ -31,10 +46,18 @@ export interface CartogramGeometry {
   width: number;
   height: number;
   shapes: RegionShape[];
+  components: CartogramComponent[];
+}
+
+interface OccupiedCell {
+  row: number;
+  col: number;
+  rect: Rect;
 }
 
 const CELL_SIZE = 100;
-const MAP_PADDING = CELL_SIZE * 0.9;
+const VIEW_PADDING = CELL_SIZE * 0.45;
+const COMPONENT_PADDING = CELL_SIZE * 1.1;
 const POLYGON_GAP = CELL_SIZE * 0.14;
 const SITE_JITTER = 0.16;
 
@@ -50,35 +73,35 @@ const DISTRICT_WARP: Record<DistrictId, { xTilt: number; yTilt: number }> = {
 };
 
 const REGION_TWEAKS: Record<string, Partial<Point>> = {
-  kaliningrad_oblast: { x: -0.65, y: 0.12 },
-  murmansk_oblast: { x: -0.34, y: -0.34 },
-  karelia_republic: { x: -0.12, y: -0.12 },
-  arkhangelsk_oblast: { x: 0.06, y: -0.2 },
-  nenets_ao: { x: 0.28, y: -0.28 },
-  komi_republic: { x: 0.18, y: -0.12 },
-  crimea_republic: { x: -0.22, y: 0.2 },
-  sevastopol_city: { x: -0.18, y: 0.68 },
-  krasnodar_krai: { x: -0.08, y: 0.12 },
-  adygea_republic: { x: -0.02, y: 0.08 },
-  dagestan_republic: { x: 0.22, y: 0.16 },
-  astrakhan_oblast: { x: 0.12, y: 0.08 },
-  kalmykia_republic: { x: 0.04, y: 0.06 },
-  yamalo_nenets_ao: { x: 0.08, y: -0.16 },
-  khanty_mansi_ao: { x: -0.04, y: -0.08 },
-  sakha_republic: { x: 0.28, y: -0.24 },
-  krasnoyarsk_krai: { x: 0.06, y: 0.04 },
-  irkutsk_oblast: { x: 0.04, y: 0.06 },
-  buryatia_republic: { x: 0.06, y: 0.12 },
-  altai_republic: { x: 0.06, y: 0.22 },
-  tuva_republic: { x: 0.08, y: 0.16 },
-  chukotka_ao: { x: 0.64, y: -0.32 },
-  kamchatka_krai: { x: 0.74, y: 0.16 },
-  magadan_oblast: { x: 0.36, y: 0.02 },
-  khabarovsk_krai: { x: 0.18, y: 0.04 },
-  amur_oblast: { x: 0.08, y: 0.12 },
-  jewish_ao: { x: 0.1, y: 0.18 },
-  primorsky_krai: { x: 0.22, y: 0.32 },
-  sakhalin_oblast: { x: 0.86, y: 0.18 },
+  kaliningrad_oblast: { x: -0.16, y: 0.04 },
+  murmansk_oblast: { x: -0.18, y: -0.2 },
+  karelia_republic: { x: -0.08, y: -0.08 },
+  arkhangelsk_oblast: { x: 0.02, y: -0.1 },
+  nenets_ao: { x: 0.14, y: -0.18 },
+  komi_republic: { x: 0.08, y: -0.04 },
+  crimea_republic: { x: -0.08, y: 0.1 },
+  sevastopol_city: { x: -0.08, y: 0.24 },
+  krasnodar_krai: { x: -0.06, y: 0.08 },
+  adygea_republic: { x: -0.02, y: 0.06 },
+  dagestan_republic: { x: 0.12, y: 0.12 },
+  astrakhan_oblast: { x: 0.08, y: 0.04 },
+  kalmykia_republic: { x: 0.04, y: 0.04 },
+  yamalo_nenets_ao: { x: 0.06, y: -0.1 },
+  khanty_mansi_ao: { x: -0.04, y: -0.04 },
+  sakha_republic: { x: 0.16, y: -0.14 },
+  krasnoyarsk_krai: { x: 0.04, y: 0.02 },
+  irkutsk_oblast: { x: 0.03, y: 0.03 },
+  buryatia_republic: { x: 0.04, y: 0.08 },
+  altai_republic: { x: 0.04, y: 0.12 },
+  tuva_republic: { x: 0.06, y: 0.1 },
+  chukotka_ao: { x: 0.26, y: -0.14 },
+  kamchatka_krai: { x: 0.18, y: 0.06 },
+  magadan_oblast: { x: 0.08, y: 0.01 },
+  khabarovsk_krai: { x: 0.08, y: 0.02 },
+  amur_oblast: { x: 0.04, y: 0.08 },
+  jewish_ao: { x: 0.04, y: 0.12 },
+  primorsky_krai: { x: 0.1, y: 0.16 },
+  sakhalin_oblast: { x: 0.18, y: 0.08 },
 };
 
 function hashToUnit(value: string, seed: number): number {
@@ -87,6 +110,24 @@ function hashToUnit(value: string, seed: number): number {
     hash = (hash * 33 + value.charCodeAt(index)) >>> 0;
   }
   return (hash / 0xffffffff) * 2 - 1;
+}
+
+function getBounds(points: Point[]): PolygonBounds {
+  const xs = points.map((point) => point.x);
+  const ys = points.map((point) => point.y);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+
+  return {
+    minX,
+    minY,
+    maxX,
+    maxY,
+    width: maxX - minX,
+    height: maxY - minY,
+  };
 }
 
 function getRegionSite(region: Region): Point {
@@ -109,24 +150,6 @@ function getRegionSite(region: Region): Point {
   return {
     x: x * CELL_SIZE,
     y: y * CELL_SIZE,
-  };
-}
-
-function getBounds(points: Point[]): PolygonBounds {
-  const xs = points.map((point) => point.x);
-  const ys = points.map((point) => point.y);
-  const minX = Math.min(...xs);
-  const maxX = Math.max(...xs);
-  const minY = Math.min(...ys);
-  const maxY = Math.max(...ys);
-
-  return {
-    minX,
-    minY,
-    maxX,
-    maxY,
-    width: maxX - minX,
-    height: maxY - minY,
   };
 }
 
@@ -243,6 +266,111 @@ function getLabelFontSize(region: Region, bounds: PolygonBounds): number {
   return Math.max(16, Math.min(34, Math.min(widthBased, heightBased)));
 }
 
+function getRegionCells(region: Region): OccupiedCell[] {
+  const width = region.width ?? 1;
+  const height = region.height ?? 1;
+  const cells: OccupiedCell[] = [];
+
+  for (let rowOffset = 0; rowOffset < height; rowOffset += 1) {
+    for (let colOffset = 0; colOffset < width; colOffset += 1) {
+      const row = region.row + rowOffset;
+      const col = region.col + colOffset;
+
+      cells.push({
+        row,
+        col,
+        rect: {
+          x: (col - 1) * CELL_SIZE,
+          y: (row - 1) * CELL_SIZE,
+          width: CELL_SIZE,
+          height: CELL_SIZE,
+        },
+      });
+    }
+  }
+
+  return cells;
+}
+
+function getRegionComponentMap(regions: Region[]): {
+  components: Map<string, OccupiedCell[]>;
+  regionComponentId: Map<string, string>;
+} {
+  const cells = new Map<string, OccupiedCell>();
+  const regionAnchors = new Map<string, string>();
+
+  for (const region of regions) {
+    const regionCells = getRegionCells(region);
+    const anchor = regionCells[0];
+    regionAnchors.set(region.id, `${anchor.row},${anchor.col}`);
+
+    for (const cell of regionCells) {
+      cells.set(`${cell.row},${cell.col}`, cell);
+    }
+  }
+
+  const visited = new Set<string>();
+  const cellToComponentId = new Map<string, string>();
+  const components = new Map<string, OccupiedCell[]>();
+  let componentIndex = 0;
+
+  for (const [cellKey, cell] of cells.entries()) {
+    if (visited.has(cellKey)) continue;
+
+    componentIndex += 1;
+    const componentId = `component-${componentIndex}`;
+    const queue = [cell];
+    const componentCells: OccupiedCell[] = [];
+    visited.add(cellKey);
+
+    while (queue.length) {
+      const current = queue.shift()!;
+      const currentKey = `${current.row},${current.col}`;
+      componentCells.push(current);
+      cellToComponentId.set(currentKey, componentId);
+
+      const neighbors = [
+        [current.row - 1, current.col],
+        [current.row + 1, current.col],
+        [current.row, current.col - 1],
+        [current.row, current.col + 1],
+      ];
+
+      for (const [neighborRow, neighborCol] of neighbors) {
+        const neighborKey = `${neighborRow},${neighborCol}`;
+        if (!cells.has(neighborKey) || visited.has(neighborKey)) continue;
+        visited.add(neighborKey);
+        queue.push(cells.get(neighborKey)!);
+      }
+    }
+
+    components.set(componentId, componentCells);
+  }
+
+  const regionComponentId = new Map<string, string>();
+  for (const region of regions) {
+    const anchorKey = regionAnchors.get(region.id);
+    if (!anchorKey) continue;
+    const componentId = cellToComponentId.get(anchorKey);
+    if (componentId) {
+      regionComponentId.set(region.id, componentId);
+    }
+  }
+
+  return { components, regionComponentId };
+}
+
+function getComponentBounds(cells: OccupiedCell[]): PolygonBounds {
+  const points: Point[] = [];
+
+  for (const cell of cells) {
+    points.push({ x: cell.rect.x, y: cell.rect.y });
+    points.push({ x: cell.rect.x + cell.rect.width, y: cell.rect.y + cell.rect.height });
+  }
+
+  return getBounds(points);
+}
+
 export function polygonToPath(points: Point[]): string {
   if (!points.length) {
     return '';
@@ -254,53 +382,87 @@ export function polygonToPath(points: Point[]): string {
 }
 
 export function buildCartogramGeometry(regions: Region[]): CartogramGeometry {
-  const sites = regions.map((region) => ({
-    region,
-    site: getRegionSite(region),
-  }));
+  const siteByRegionId = new Map(regions.map((region) => [region.id, getRegionSite(region)]));
+  const { components: cellComponents, regionComponentId } = getRegionComponentMap(regions);
+  const cartogramComponents: CartogramComponent[] = [];
+  const allShapes: RegionShape[] = [];
+  const visiblePoints: Point[] = [];
 
-  const siteBounds = getBounds(sites.map(({ site }) => site));
-  const minX = siteBounds.minX - MAP_PADDING;
-  const minY = siteBounds.minY - MAP_PADDING;
-  const maxX = siteBounds.maxX + MAP_PADDING;
-  const maxY = siteBounds.maxY + MAP_PADDING;
+  for (const [componentId, cells] of cellComponents.entries()) {
+    const componentRegions = regions.filter(
+      (region) => regionComponentId.get(region.id) === componentId
+    );
 
-  const boundsPolygon: Point[] = [
-    { x: minX, y: minY },
-    { x: maxX, y: minY },
-    { x: maxX, y: maxY },
-    { x: minX, y: maxY },
-  ];
+    const componentBounds = getComponentBounds(cells);
+    const initialPolygon: Point[] = [
+      {
+        x: componentBounds.minX - COMPONENT_PADDING,
+        y: componentBounds.minY - COMPONENT_PADDING,
+      },
+      {
+        x: componentBounds.maxX + COMPONENT_PADDING,
+        y: componentBounds.minY - COMPONENT_PADDING,
+      },
+      {
+        x: componentBounds.maxX + COMPONENT_PADDING,
+        y: componentBounds.maxY + COMPONENT_PADDING,
+      },
+      {
+        x: componentBounds.minX - COMPONENT_PADDING,
+        y: componentBounds.maxY + COMPONENT_PADDING,
+      },
+    ];
 
-  const shapes: RegionShape[] = sites.map(({ region, site }) => {
-    let polygon = boundsPolygon;
+    const shapes: RegionShape[] = componentRegions.map((region) => {
+      const site = siteByRegionId.get(region.id)!;
+      let polygon = initialPolygon;
 
-    for (const candidate of sites) {
-      if (candidate.region.id === region.id) continue;
-      polygon = clipPolygonToHalfPlane(polygon, site, candidate.site);
+      for (const otherRegion of componentRegions) {
+        if (otherRegion.id === region.id) continue;
+        polygon = clipPolygonToHalfPlane(polygon, site, siteByRegionId.get(otherRegion.id)!);
+      }
+
+      const centroid = polygonCentroid(polygon);
+      const shrunkenPolygon = shrinkPolygon(polygon, centroid, POLYGON_GAP);
+      const bounds = getBounds(shrunkenPolygon);
+
+      return {
+        region,
+        componentId,
+        site,
+        label: site,
+        polygon: shrunkenPolygon,
+        bounds,
+        labelFontSize: getLabelFontSize(region, bounds),
+      };
+    });
+
+    const maskRects = cells.map((cell) => cell.rect);
+    for (const rect of maskRects) {
+      visiblePoints.push({ x: rect.x, y: rect.y });
+      visiblePoints.push({ x: rect.x + rect.width, y: rect.y + rect.height });
     }
 
-    const centroid = polygonCentroid(polygon);
-    const shrunkenPolygon = shrinkPolygon(polygon, centroid, POLYGON_GAP);
-    const shapeBounds = getBounds(shrunkenPolygon);
+    cartogramComponents.push({
+      id: componentId,
+      bounds: componentBounds,
+      maskRects,
+      shapes,
+    });
 
-    return {
-      region,
-      site,
-      label: site,
-      polygon: shrunkenPolygon,
-      bounds: shapeBounds,
-      labelFontSize: getLabelFontSize(region, shapeBounds),
-    };
-  });
+    allShapes.push(...shapes);
+  }
+
+  const visibleBounds = getBounds(visiblePoints);
 
   return {
-    minX,
-    minY,
-    maxX,
-    maxY,
-    width: maxX - minX,
-    height: maxY - minY,
-    shapes,
+    minX: visibleBounds.minX - VIEW_PADDING,
+    minY: visibleBounds.minY - VIEW_PADDING,
+    maxX: visibleBounds.maxX + VIEW_PADDING,
+    maxY: visibleBounds.maxY + VIEW_PADDING,
+    width: visibleBounds.width + VIEW_PADDING * 2,
+    height: visibleBounds.height + VIEW_PADDING * 2,
+    shapes: allShapes,
+    components: cartogramComponents,
   };
 }

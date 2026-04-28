@@ -44,43 +44,68 @@ export function createMapView(options: MapOptions): MapView {
     );
     svg.setAttribute('aria-label', 'Cartogram of Russian regions');
 
-    for (const shape of geometry.shapes) {
-      const group = createSvgElement('g');
-      group.classList.add('region-group');
+    const defs = createSvgElement('defs');
+    svg.appendChild(defs);
 
-      const path = createSvgElement('path');
-      path.classList.add('region-shape');
-      path.dataset.regionId = shape.region.id;
-      path.dataset.level = currentState[shape.region.id] ?? 'NEVER';
-      path.dataset.districtId = shape.region.districtId;
-      path.setAttribute('d', polygonToPath(shape.polygon));
-      path.setAttribute('tabindex', '0');
-      path.setAttribute('role', 'button');
+    for (const component of geometry.components) {
+      const clipPath = createSvgElement('clipPath');
+      clipPath.id = `clip-${component.id}`;
+      clipPath.setAttribute('clipPathUnits', 'userSpaceOnUse');
 
-      const title = currentLocale === 'ru' ? shape.region.fullNameRu : shape.region.fullNameEn;
-      path.setAttribute('aria-label', title);
+      for (const rect of component.maskRects) {
+        const rectEl = createSvgElement('rect');
+        rectEl.setAttribute('x', rect.x.toFixed(2));
+        rectEl.setAttribute('y', rect.y.toFixed(2));
+        rectEl.setAttribute('width', rect.width.toFixed(2));
+        rectEl.setAttribute('height', rect.height.toFixed(2));
+        clipPath.appendChild(rectEl);
+      }
 
-      path.addEventListener('click', () => {
-        onRegionClick(shape.region, path);
-      });
+      defs.appendChild(clipPath);
 
-      path.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
+      const componentLayer = createSvgElement('g');
+      componentLayer.setAttribute('clip-path', `url(#clip-${component.id})`);
+
+      for (const shape of component.shapes) {
+        const group = createSvgElement('g');
+        group.classList.add('region-group');
+
+        const path = createSvgElement('path');
+        path.classList.add('region-shape');
+        path.dataset.regionId = shape.region.id;
+        path.dataset.level = currentState[shape.region.id] ?? 'NEVER';
+        path.dataset.districtId = shape.region.districtId;
+        path.setAttribute('d', polygonToPath(shape.polygon));
+        path.setAttribute('tabindex', '0');
+        path.setAttribute('role', 'button');
+
+        const title = currentLocale === 'ru' ? shape.region.fullNameRu : shape.region.fullNameEn;
+        path.setAttribute('aria-label', title);
+
+        path.addEventListener('click', () => {
           onRegionClick(shape.region, path);
-        }
-      });
+        });
 
-      const label = createSvgElement('text');
-      label.classList.add('region-label');
-      label.setAttribute('x', shape.label.x.toFixed(2));
-      label.setAttribute('y', shape.label.y.toFixed(2));
-      label.setAttribute('font-size', shape.labelFontSize.toFixed(2));
-      label.textContent = shape.region.shortLabel;
+        path.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onRegionClick(shape.region, path);
+          }
+        });
 
-      group.appendChild(path);
-      group.appendChild(label);
-      svg.appendChild(group);
+        const label = createSvgElement('text');
+        label.classList.add('region-label');
+        label.setAttribute('x', shape.label.x.toFixed(2));
+        label.setAttribute('y', shape.label.y.toFixed(2));
+        label.setAttribute('font-size', shape.labelFontSize.toFixed(2));
+        label.textContent = shape.region.shortLabel;
+
+        group.appendChild(path);
+        group.appendChild(label);
+        componentLayer.appendChild(group);
+      }
+
+      svg.appendChild(componentLayer);
     }
 
     container.appendChild(svg);
